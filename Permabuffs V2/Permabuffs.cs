@@ -82,7 +82,8 @@ namespace Permabuffs_V2
 			Commands.ChatCommands.Add(new Command("pb.reload", PBReload, "pbreload"));
 			Commands.ChatCommands.Add(new Command("pb.region", PBRegion, "regionbuff"));
 			Commands.ChatCommands.Add(new Command("pb.global", PBGlobal, "globalbuff"));
-			Commands.ChatCommands.Add(new Command("pb.use", PBClear, "clearbuffs") { HelpText = "Removes all permabuffs." });
+			Commands.ChatCommands.Add(new Command("pb.use", PBClear, "clearbuff") { HelpText = "Removes all permabuffs." });
+			Commands.ChatCommands.Add(new Command("pb.clear", PBClearAll, "clearbuffs") { HelpText = "Removes everyone's permabuffs at once." });
 		}
 
 		public void OnGreet(GreetPlayerEventArgs args)
@@ -738,35 +739,28 @@ namespace Permabuffs_V2
 
 		private void PBClear(CommandArgs args)
 		{
-			if (args.Parameters.Count == 1 && (args.Parameters[0] == "*" || args.Parameters[0] == "all"))
+			if (!args.Player.RealPlayer)
 			{
-				if (!args.Player.HasPermission("pb.clear"))
-				{
-					args.Player.SendErrorMessage("You do not have permission to clear all permabuffs.");
-					return;
-				}
-				foreach (KeyValuePair<int, DBInfo> kvp in permas)
-				{
-					kvp.Value.bufflist.Clear();
-					clearDB();
-				}
-				args.Player.SendSuccessMessage("All permabuffs have been deactivated for all players.");
-				if (!args.Silent)
-				{
-					TSPlayer.All.SendInfoMessage("{0} has deactivated all permabuffs!", args.Player.User.Name);
-				}
+				args.Player.SendErrorMessage("You must be in-game to use this command.");
+				return;
 			}
-			else
-			{
-				if (!args.Player.RealPlayer)
-				{
-					args.Player.SendErrorMessage("You must be in-game to use this command.");
-					return;
-				}
-				permas[args.Player.User.ID].bufflist.Clear();
+			permas[args.Player.User.ID].bufflist.Clear();
 
-				clearDB(args.Player.User.ID);
-				args.Player.SendSuccessMessage("All of your permabuffs have been deactivated.");
+			clearDB(args.Player.User.ID);
+			args.Player.SendSuccessMessage("All of your permabuffs have been deactivated.");
+		}
+
+		private void PBClearAll(CommandArgs args)
+		{
+			foreach (KeyValuePair<int, DBInfo> kvp in permas)
+			{
+				kvp.Value.bufflist.Clear();
+				clearDB();
+			}
+			args.Player.SendSuccessMessage("All permabuffs have been deactivated for all players.");
+			if (!args.Silent)
+			{
+				TSPlayer.All.SendInfoMessage("{0} has deactivated all permabuffs!", args.Player.User.Name);
 			}
 		}
 		#endregion
