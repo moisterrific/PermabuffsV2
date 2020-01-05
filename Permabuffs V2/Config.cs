@@ -234,14 +234,21 @@ namespace Permabuffs_V2
 
 		public void Write(string path)
 		{
-			File.WriteAllText(path, JsonConvert.SerializeObject(Permabuffs.config, Formatting.Indented));
+			File.WriteAllText(path, JsonConvert.SerializeObject(this, Formatting.Indented));
 		}
 
 		public static Config Read(string path)
 		{
-			return !File.Exists(path)
-				? new Config()
-				: JsonConvert.DeserializeObject<Config>(File.ReadAllText(path));
+			if (!File.Exists(path))
+			{
+				Config config = new Config();
+				config.Write(path);
+				return config;
+			}
+			else 
+			{
+				return JsonConvert.DeserializeObject<Config>(File.ReadAllText(path));
+			}
 		}
 	}
 }
