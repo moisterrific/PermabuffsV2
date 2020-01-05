@@ -52,4 +52,4 @@ Ex: pb.probuffs, pb.petbuffs, pb.debuffs are the necessary permissions to use bu
 3. Open the PermabuffsConfig.json file and make any desired changes.
 4. Use /pbreload. 
 
-[2.1 - Permabuffs | TShock for Terraria](https://tshock.co/xf/index.php?resources/permabuffs.5/)
+Source: [Permabuffs | TShock for Terraria](https://tshock.co/xf/index.php?resources/permabuffs.5/)
